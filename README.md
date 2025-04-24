@@ -181,6 +181,22 @@ Kopf separat malen:
                              pygame.Rect(pt.x+4, pt.y+4, 12, 12))
 ```
 
+Am Rand "teleportieren":
+
+```Python
+# Überprüfen der Position des Schlangenkopfes und zyklische Anpassung
+if self.head.x > self.w - BLOCK_SIZE:
+    self.head.x = 0  # Links erscheinen
+elif self.head.x < 0:
+    self.head.x = self.w - BLOCK_SIZE  # Rechts erscheinen
+
+if self.head.y > self.h - BLOCK_SIZE:
+    self.head.y = 0  # Oben erscheinen
+elif self.head.y < 0:
+    self.head.y = self.h - BLOCK_SIZE  # Unten erscheinen
+```
+
+
 ## Tag 3: ChatBot zu Pokemon
 Siehe Ordner [Chatbot](Chatbot)
 
