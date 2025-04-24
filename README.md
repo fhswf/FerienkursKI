@@ -85,6 +85,87 @@ class ResNetCNN(nn.Module):
 ## Tag 2: KI für Snake
 Siehe Ordner [SnakeAI](SnakeAI)
 
+Code füer den erweiterten Zustand:
+
+```Python
+def get_state(self, game):
+    head = game.snake[0]
+    body_segments = game.snake[1:]
+
+    point_l = Point(head.x - 20, head.y)
+    point_r = Point(head.x + 20, head.y)
+    point_u = Point(head.x, head.y - 20)
+    point_d = Point(head.x, head.y + 20)
+    
+    dir_l = game.direction == Direction.LEFT
+    dir_r = game.direction == Direction.RIGHT
+    dir_u = game.direction == Direction.UP
+    dir_d = game.direction == Direction.DOWN
+
+    # Überprüfen der Nähe von Körpergliedern
+    body_near_head = {
+        "left": any(segment.x == point_l.x and segment.y == point_l.y for segment in body_segments),
+        "right": any(segment.x == point_r.x and segment.y == point_r.y for segment in body_segments),
+        "up": any(segment.x == point_u.x and segment.y == point_u.y for segment in body_segments),
+        "down": any(segment.x == point_d.x and segment.y == point_d.y for segment in body_segments),
+    }
+
+    # Gefahr des Spiralens pro Richtung
+    spiral_risk = {
+        "left": (dir_u and body_near_head["up"]) + (dir_d and body_near_head["down"]),
+        "right": (dir_u and body_near_head["up"]) + (dir_d and body_near_head["down"]),
+        "up": (dir_l and body_near_head["left"]) + (dir_r and body_near_head["right"]),
+        "down": (dir_l and body_near_head["left"]) + (dir_r and body_near_head["right"]),
+    }
+    
+    in_danger_of_spiral = {
+        "left": spiral_risk["left"] > 0,
+        "right": spiral_risk["right"] > 0,
+        "up": spiral_risk["up"] > 0,
+        "down": spiral_risk["down"] > 0
+    }
+
+    state = [
+        # Danger straight
+        (dir_r and game.is_collision(point_r)) or 
+        (dir_l and game.is_collision(point_l)) or 
+        (dir_u and game.is_collision(point_u)) or 
+        (dir_d and game.is_collision(point_d)),
+
+        # Danger right
+        (dir_u and game.is_collision(point_r)) or 
+        (dir_d and game.is_collision(point_l)) or 
+        (dir_l and game.is_collision(point_u)) or 
+        (dir_r and game.is_collision(point_d)),
+
+        # Danger left
+        (dir_d and game.is_collision(point_r)) or 
+        (dir_u and game.is_collision(point_l)) or 
+        (dir_r and game.is_collision(point_u)) or 
+        (dir_l and game.is_collision(point_d)),
+        
+        # Move direction
+        dir_l,
+        dir_r,
+        dir_u,
+        dir_d,
+        
+        # Food location 
+        game.food.x < game.head.x,
+        game.food.x > game.head.x,
+        game.food.y < game.head.y,
+        game.food.y > game.head.y,
+        
+        # New state for spiral risks (for directions)
+        in_danger_of_spiral["left"],
+        in_danger_of_spiral["right"],
+        in_danger_of_spiral["up"],
+        in_danger_of_spiral["down"]
+    ]
+
+    return np.array(state, dtype=int)
+```
+
 ## Tag 3: ChatBot zu Pokemon
 Siehe Ordner [Chatbot](Chatbot)
 
