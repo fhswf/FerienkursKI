@@ -166,6 +166,21 @@ Code füer den erweiterten Zustand:
         return np.array(state, dtype=int)
 ```
 
+Kopf separat malen:
+
+```Python
+        # draw head
+        pygame.draw.rect(self.display, GREEN, pygame.Rect(
+            self.head.x, self.head.y, BLOCK_SIZE, BLOCK_SIZE))
+        
+        # draw snake body
+        for pt in self.snake[1:]:
+            pygame.draw.rect(self.display, BLUE1, pygame.Rect(
+                pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
+            pygame.draw.rect(self.display, BLUE2,
+                             pygame.Rect(pt.x+4, pt.y+4, 12, 12))
+```
+
 ## Tag 3: ChatBot zu Pokemon
 Siehe Ordner [Chatbot](Chatbot)
 
