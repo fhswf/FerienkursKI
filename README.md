@@ -36,8 +36,8 @@ class CNN(nn.Module):
 ## Tag 2: KI für Snake
 Siehe Ordner [SnakeAI](SnakeAI)
 
-## Tag 3: ChatBot zu Pokemon
-Siehe Ordner [Chatbot](Chatbot)
+## Tag 3: Vom Sprachmodell zum Chatbot
+Siehe Ordner [RAG](RAG)
 
 
 
