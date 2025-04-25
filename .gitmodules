@@ -1,0 +1,3 @@
+[submodule "RAG/data/shakespeare"]
+	path = RAG/data/shakespeare
+	url = https://github.com/TheMITTech/shakespeare.git
