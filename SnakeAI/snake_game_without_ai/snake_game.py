@@ -4,8 +4,8 @@ from enum import Enum
 from collections import namedtuple
 
 pygame.init()
-font = pygame.font.Font('arial.ttf', 25)
-#font = pygame.font.SysFont('arial', 25)
+#font = pygame.font.Font('arial.ttf', 25)
+font = pygame.font.SysFont('arial', 25)
 
 class Direction(Enum):
     RIGHT = 1
@@ -44,15 +44,21 @@ class SnakeGame:
                       Point(self.head.x-(2*BLOCK_SIZE), self.head.y)]
         
         self.score = 0
-        self.food = None
-        self._place_food()
+        self.food_count = 3 # Wie viel Futter soll es geben?
+        self.foods = []     # Liste statt einzelnem Punkt
+        for _ in range(self.food_count):
+            self._place_food()
         
     def _place_food(self):
-        x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE 
-        y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
-        self.food = Point(x, y)
-        if self.food in self.snake:
-            self._place_food()
+        while True:
+            x = random.randint(0, (self.w - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
+            y = random.randint(0, (self.h - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
+            new_food = Point(x, y)
+            
+            # Prüfen, ob der Platz frei ist (Schlange + anderes Futter)
+            if new_food not in self.snake and new_food not in self.foods:
+                self.foods.append(new_food)
+                break
         
     def play_step(self):
         # 1. collect user input
@@ -61,7 +67,7 @@ class SnakeGame:
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     self.direction = Direction.LEFT
                 elif event.key == pygame.K_RIGHT:
                     self.direction = Direction.RIGHT
@@ -81,9 +87,10 @@ class SnakeGame:
             return game_over, self.score
             
         # 4. place new food or just move
-        if self.head == self.food:
+        if self.head in self.foods:
             self.score += 1
-            self._place_food()
+            self.foods.remove(self.head) # Das gefressene Stück entfernen
+            self._place_food()           # Ein neues irgendwo platzieren
         else:
             self.snake.pop()
         
@@ -110,7 +117,8 @@ class SnakeGame:
             pygame.draw.rect(self.display, BLUE1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
             pygame.draw.rect(self.display, BLUE2, pygame.Rect(pt.x+4, pt.y+4, 12, 12))
             
-        pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
+        for food in self.foods:
+            pygame.draw.rect(self.display, RED, pygame.Rect(food.x, food.y, BLOCK_SIZE, BLOCK_SIZE))
         
         text = font.render("Score: " + str(self.score), True, WHITE)
         self.display.blit(text, [0, 0])
