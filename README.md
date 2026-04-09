@@ -85,7 +85,18 @@ class ResNetCNN(nn.Module):
 ## Tag 2: KI für Snake
 Siehe Ordner [SnakeAI](SnakeAI)
 
-Code füer den erweiterten Zustand:
+Um den Code auf Deinen Rechner zu ziehen, öffne ein Terminal und gebe folgende Befehle ein 
+```bash
+git clone https://github.com/fhswf/FerienkursKI.git FerienkursKI_2026
+```
+
+Öffne dann `vscode`:
+```bash
+code FerienkursKI_2026
+```
+
+## Erweiterungen 
+Code für den erweiterten Zustand:
 
 ```Python
     def get_state(self, game):
